@@ -5,18 +5,20 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cats</title>
+    <title>Comments Index</title>
 </head>
 
 <body>
-    <h1>All the cats </h1>
+    <h1>Comments</h1>
     <ul>
-        <% for (let cat of cats) { %>
+        <% for (let c of comments) { %>
             <li>
-                <%= cat %>
+                <%= c.username %> - <%= c.comment %>
             </li>
+            <a href="/comments/<%=c.id%> ">details</a>
             <% } %>
     </ul>
+    <a href="/comments/new">New comment</a>
 </body>
 
 </html>
