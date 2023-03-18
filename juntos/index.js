@@ -1,29 +1,41 @@
 const express = require('express');
 const app = express()
-const methodOverride = require('method-override')
-const path = require('path');
 const mongoose = require('mongoose');
+const path = require('path');
 const Product = require('./models/products')
-mongoose.connect('mongodb://localhost:27017/farmStand', { useNewUrlParser: true, useUnifiedTopology: true })
+
+mongoose.connect('mongodb://localhost:27017/farmStand')
     .then(() => {
-        console.log('Connected to DB');
-    }).catch((e) => {
-        console.log('Problem');
+        console.log("MONGODB connected");
+    })
+    .catch((e) => {
+        console.log("MONGODB ERROR");
         console.log(e);
     })
-
-app.use(express.urlencoded({ extended: true, async: true }));
-app.use(methodOverride('_method'))
 app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'ejs')
+app.use(express.urlencoded({ extended: true }))
+
 app.get('/products', async (req, res) => {
     const products = await Product.find({})
-    res.render('index', { products })
+    res.render('products/index', { products })
 })
 
+app.get('/products/new', (req, res) => {
+    res.render('products/new')
+})
+
+app.get('/products/:id', async (req, res) => {
+    const { id } = req.params
+    const product = await Product.findById(id)
+    res.render('products/show', { product })
+})
+
+app.post('/products', async (req, res) => {
+    const newProduct = new Product(req.body)
+    await newProduct.save()
+    res.redirect(`products/${newProduct._id}`)
+})
 app.listen(3000, () => {
-    console.log('Listening to port 3000');
+    console.log("SERVER IS LISTENING TO PORT 3000");
 })
-
-
-
