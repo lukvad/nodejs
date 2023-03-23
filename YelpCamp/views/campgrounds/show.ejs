@@ -9,13 +9,21 @@
 </head>
 
 <body>
+    <div>
+        <a href="/campgrounds/<%=campground._id%>/edit">Edit Campground</a>
+    </div>
+    <form action="/campgrounds/<%=campground._id%>?_method=DELETE" method="post">
+        <button>DELETE</button>
+    </form>
     <h1>
         <%= campground.title %>
     </h1>
     <h2>
         <%= campground.location %>
     </h2>
-    <a href="/campgrounds">Back</a>
+    <footer>
+        <a href="/campgrounds">All Campgrounds</a>
+    </footer>
 </body>
 
 </html>
