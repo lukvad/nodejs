@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const Campground = require('./models/campground')
 const method = require('method-override');
 const morgan = require('morgan');
+const ejsMate = require('ejs-mate');
 
 mongoose.connect('mongodb://localhost:27017/yelp-camp', {
     useNewUrlParser: true,
@@ -22,6 +23,7 @@ app.use(express.urlencoded({ extended: true }))
 app.use(method('_method'))
 app.set('view engine', 'ejs')
 app.set('views', path.join(__dirname, 'views'))
+app.engine('ejs', ejsMate)
 
 app.get('/campgrounds', async (req, res) => {
     const campgrounds = await Campground.find({})
@@ -30,10 +32,6 @@ app.get('/campgrounds', async (req, res) => {
 
 app.use(morgan('dev'))
 
-
-app.get('/dogs', (req, res) => {
-    res.send("WOOF WOOF")
-})
 
 app.get('/campgrounds/new', (req, res) => {
     res.render('campgrounds/new')
@@ -66,6 +64,10 @@ app.delete('/campgrounds/:id', async (req, res) => {
     const campground = await Campground.findByIdAndDelete(id)
     res.redirect('/campgrounds')
 })
+
+
+
+
 
 app.listen(3000, () => {
     console.log("Listening to port 3000");
