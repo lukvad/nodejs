@@ -5,6 +5,7 @@ const Campground = require('./models/campground')
 const method = require('method-override');
 const morgan = require('morgan');
 const ejsMate = require('ejs-mate');
+const AppError = require('./AppError');
 
 mongoose.connect('mongodb://localhost:27017/yelp-camp', {
     useNewUrlParser: true,
@@ -41,9 +42,12 @@ app.get('/campgrounds/:id/edit', async (req, res) => {
     const campground = await Campground.findById(id)
     res.render('campgrounds/edit', { campground })
 })
-app.get('/campgrounds/:id', async (req, res) => {
+app.get('/campgrounds/:id', async (req, res, next) => {
     const { id } = req.params
     const campground = await Campground.findById(id)
+    if (!campground) {
+        return next(new AppError('Product not found', 404))
+    }
     res.render('campgrounds/show', { campground })
 })
 
@@ -77,22 +81,25 @@ const verifyPassword = (req, res, next) => {
     if (password === 'chickennuggets') {
         return next()
     }
-    throw new Error('Password needed!')
+    throw new AppError('Password needed!', 401)
 }
 app.get('/secret', verifyPassword, (req, res) => {
     res.send('My secret is : bla bla')
 })
-app.use((req, res) => {
-    res.status(404).send('NOT FOUND!')
+
+app.get('/admin', (req, res) => {
+    throw new AppError('You are not an admin!', 403)
 })
 
-
+// app.use((err, req, res, next) => {
+//     console.log('******************************************');
+//     console.log('******************ERROR*******************');
+//     console.log('******************************************');
+// })
 app.use((err, req, res, next) => {
-    console.log('******************************************');
-    console.log('******************ERROR*******************');
-    console.log('******************************************');
+    const { status = 500, message = 'Something went wrong' } = err
+    res.status(status).send(message)
 })
-
 
 app.listen(3000, () => {
     console.log("Listening to port 3000");
