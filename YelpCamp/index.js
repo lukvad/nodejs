@@ -30,7 +30,7 @@ app.get('/campgrounds', async (req, res) => {
     res.render('campgrounds/index', { campgrounds })
 })
 
-app.use(morgan('dev'))
+app.use(morgan('tiny'))
 
 
 app.get('/campgrounds/new', (req, res) => {
@@ -67,6 +67,31 @@ app.delete('/campgrounds/:id', async (req, res) => {
 
 
 
+app.get('/error', (req, res) => {
+    chicken.fly()
+})
+
+
+const verifyPassword = (req, res, next) => {
+    const { password } = req.query
+    if (password === 'chickennuggets') {
+        return next()
+    }
+    throw new Error('Password needed!')
+}
+app.get('/secret', verifyPassword, (req, res) => {
+    res.send('My secret is : bla bla')
+})
+app.use((req, res) => {
+    res.status(404).send('NOT FOUND!')
+})
+
+
+app.use((err, req, res, next) => {
+    console.log('******************************************');
+    console.log('******************ERROR*******************');
+    console.log('******************************************');
+})
 
 
 app.listen(3000, () => {
