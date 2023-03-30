@@ -2,11 +2,21 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema
 
 const CampGroundSchema = new Schema({
-    title: String,
+    title: {
+        type: String,
+        required: [true, 'name cannot be blank']
+    },
     image: String,
-    price: Number,
+    price: {
+        type: Number,
+        required: true,
+        min: 0
+    },
     description: String,
-    location: String
+    location: {
+        type: String,
+        required: [true, 'name cannot be blank']
+    }
 })
 
 module.exports = mongoose.model('Campground', CampGroundSchema)
